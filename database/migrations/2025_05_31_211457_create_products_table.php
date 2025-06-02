@@ -34,6 +34,7 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false)->comment('Indica si el producto es destacado');
             $table->boolean('is_new')->default(false)->comment('Indica si el producto es nuevo');
             $table->boolean('is_on_sale')->default(false)->comment('Indica si el producto está en oferta');
+            $table->boolean('has_variants')->default(false)->comment('Indica si el producto tiene variantes');
             $table->timestamps();
         });
     }

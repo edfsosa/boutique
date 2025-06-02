@@ -26,6 +26,7 @@ class Product extends Model
         'is_featured',
         'is_new',
         'is_on_sale',
+        'has_variants',
     ];
 
     public function category()

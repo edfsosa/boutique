@@ -13,14 +13,20 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Categorías';
+    protected static ?string $modelLabel = 'Categoría';
+    protected static ?string $pluralModelLabel = 'Categorías';
+    protected static ?string $slug = 'categorias';
+    protected static ?string $navigationIcon = 'heroicon-o-folder-open';
 
     public static function form(Form $form): Form
     {
@@ -29,13 +35,20 @@ class CategoryResource extends Resource
                 TextInput::make('name')
                     ->label('Nombre')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(200)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
+                        if (($get('slug') ?? '') !== Str::slug($old)) {
+                            return;
+                        }
+
+                        $set('slug', Str::slug($state));
+                    }),
                 TextInput::make('slug')
                     ->label('Slug')
                     ->required()
                     ->maxLength(255)
-                    ->unique(Category::class, 'slug', ignoreRecord: true)
-                    ->columnSpanFull(),
+                    ->unique(Category::class, 'slug', ignoreRecord: true),
                 RichEditor::make('description')
                     ->label('Descripción')
                     ->toolbarButtons([
@@ -53,7 +66,8 @@ class CategoryResource extends Resource
                         'strike',
                         'underline',
                         'undo',
-                    ]),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -73,19 +87,16 @@ class CategoryResource extends Resource
                     ->label('Slug')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('description')
-                    ->label('Descripción')
-                    ->limit(50)
-                    ->sortable()
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Creado el')
                     ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('updated_at')
                     ->label('Actualizado el')
                     ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 //

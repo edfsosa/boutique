@@ -21,16 +21,4 @@ class ProductVariant extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    public function getPriceAttribute()
-    {
-        // Si hay un precio específico para la variante, lo usamos; de lo contrario, usamos el precio del producto
-        return $this->price_override ?? $this->product->price;
-    }
-
-    public function getStockAttribute()
-    {
-        // Si hay stock específico para la variante, lo usamos; de lo contrario, usamos el stock del producto
-        return $this->stock ?? $this->product->stock;
-    }
 }
